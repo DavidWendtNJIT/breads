@@ -17,15 +17,10 @@ app.use(express.urlencoded({extended: true}))
 app.use(methodOverride('_method'))
 
 
-
-
-
 // ROUTES
 app.get('/', (req, res) => {
   res.send('Welcome to an Awesome App about Breads')
 })
-
-
 
 // Breads
 const breadsController = require('./controllers/breads_controller.js')
