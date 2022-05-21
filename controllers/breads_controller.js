@@ -1,24 +1,18 @@
 const express = require("express");
 const breads = express.Router();
 const Bread = require("../models/bread.js");
-const Baker = require('../models/baker.js')
-
+const Baker = require("../models/baker.js");
 
 // Index:
-breads.get('/', (req, res) => {
-  Baker.find()
-    .then(foundBakers => {
-      Bread.find()
-      .then(foundBreads => {
-          res.render('index', {
-              breads: foundBreads,
-              bakers: foundBakers,
-              title: 'Index Page'
-          })
-      })
-    })
-})
-
+breads.get("/", async (req, res) => {
+  const foundBakers = await Baker.find().lean();
+  const foundBreads = await Bread.find().limit(6).lean();
+  res.render("index", {
+    breads: foundBreads,
+    bakers: foundBakers,
+    title: "Index Page",
+  });
+});
 
 // NEW
 breads.get("/new", (req, res) => {
@@ -30,35 +24,30 @@ breads.get("/new", (req, res) => {
 });
 
 // EDIT
-breads.get('/:id/edit', (req, res) => {
-  Baker.find()
-    .then(foundBakers => {
-        Bread.findById(req.params.id)
-          .then(foundBread => {
-            res.render('edit', {
-                bread: foundBread, 
-                bakers: foundBakers 
-            })
-          })
-    })
-})
-
-
+breads.get("/:id/edit", (req, res) => {
+  Baker.find().then((foundBakers) => {
+    Bread.findById(req.params.id).then((foundBread) => {
+      res.render("edit", {
+        bread: foundBread,
+        bakers: foundBakers,
+      });
+    });
+  });
+});
 
 // SHOW
-breads.get('/:id', (req, res) => {
+breads.get("/:id", (req, res) => {
   Bread.findById(req.params.id)
-      .populate('baker')
-      .then(foundBread => {
-        res.render('show', {
-            bread: foundBread
-        })
-      })
-      .catch(err => {
-        res.send('404')
-      })
-})
-
+    .populate("baker")
+    .then((foundBread) => {
+      res.render("show", {
+        bread: foundBread,
+      });
+    })
+    .catch((err) => {
+      res.send("404");
+    });
+});
 
 // CREATE
 breads.post("/", (req, res) => {
